@@ -2,7 +2,7 @@ apiVersion: kfdef.apps.kubeflow.org/v1
 kind: KfDef
 metadata:
   name: opendatahub
-  namespace: opendatahub3
+  namespace: opendatahub6
 spec:
   applications:
     - kustomizeConfig:
@@ -10,25 +10,24 @@ spec:
           name: manifests
           path: odh-common
       name: odh-common
-    # this is required for gpu notebooks
     - kustomizeConfig:
-      repoRef:
-        name: manifests
-        path: radanalyticsio/spark/cluster
+        repoRef:
+          name: manifests
+          path: radanalyticsio/spark/cluster
       name: radanalyticsio-spark-cluster
     - kustomizeConfig:
         parameters:
           - name: s3_endpoint_url
             value: s3.odh.com
         repoRef:
-          name: modified
-          path: jupyterhub
+          name: manifests
+          path: jupyterhub/jupyterhub
       name: jupyterhub
     - kustomizeConfig:
         overlays:
           - cuda-11.0.3
         repoRef:
-          name: modified 
+          name: modified
           path: notebook-images
       name: notebook-images
     - kustomizeConfig:
@@ -38,6 +37,6 @@ spec:
       name: odh-dashboard
   repos:
     - name: manifests
-      uri: 'https://github.com/opendatahub-io/odh-manifests/tarball/v1.0.9'
+      uri: 'https://github.com/opendatahub-io/odh-manifests/tarball/master'
     - name: modified
       uri: 'https://github.com/dmarcus-wire/odh-jh-nb/tarball/main'
