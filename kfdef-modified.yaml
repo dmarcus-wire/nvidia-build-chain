@@ -15,7 +15,7 @@ spec:
           - name: s3_endpoint_url
             value: s3.odh.com
         repoRef:
-          name: manifests
+          name: modified
           path: jupyterhub
       name: jupyterhub
     - kustomizeConfig:
