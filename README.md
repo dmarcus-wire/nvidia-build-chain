@@ -1,5 +1,9 @@
 # nvidia-build-chain
 
+
+try this [kfdef manifest](notebook-images/kfdef-modified.yaml) in the ODH operator
+
+
 from https://ngc.nvidia.com/catalog/containers/nvidia:cuda
 
 Three flavors of images are provided:
@@ -18,8 +22,6 @@ s2i image versions currently provided are:
 
 core - rhel7 base + s2i settings
 base - s2i-core + development libraries + npm
-
-
 
 Container Image = set of software ready to run
 Container = running instance of container image
