@@ -37,3 +37,9 @@ Image Registry = stores and serves Container Images
 Create Image Stream for nvidia cuda container
 `oc import-image approved-cuda:11.0.3 --from=nvcr.io/nvidia/cuda:11.3.0-cudnn8-runtime-centos8 --confirm`
 
+
+
+error instantiating Build from BuildConfig opendatahub7/s2i-minimal-gpu-cuda-11.0.3-notebook (0): Error resolving ImageStreamTag 11.0.3-cuda-s2i-thoth-ubi8-py38:latest in namespace opendatahub7: unable to find latest tagged image
+
+11.0.3-cuda-s2i-core-ubi8
+spec.triggers[*].imagechange.lastTriggeredImageID was cleared, which will trigger a build. This behavior is deprecated and will be removed in a future OpenShift release.
