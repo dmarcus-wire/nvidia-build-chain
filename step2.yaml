@@ -12,7 +12,7 @@ items:
       opendatahub.io/notebook-image-url: "https://github.com/thoth-station/s2i-minimal-notebook"
       opendatahub.io/notebook-image-name: "CUDA"
       opendatahub.io/notebook-image-desc: "Jupyter notebook image with GPU support and minimal dependency set to start experimenting with Jupyter environment."
-    name: "minimal-gpu"
+    name: "jupyter-cuda"
   spec:
     lookupPolicy:
       local: true
@@ -20,24 +20,24 @@ items:
     - annotations:
         opendatahub.io/notebook-software: '[{"name":"Python","version":"v3.8.3"},{"name":"CUDA","version":"11.0.3"}]'
         opendatahub.io/notebook-python-dependencies: '[{"name":"JupyterLab","version":"3.0.14"},{"name":"Notebook","version":"6.3.0"}]'
-      name: "py3.8-cuda-11.0.3"
+      name: "py3.8-ubi8-cuda11.0.3"
       referencePolicy:
         type: Local
 - kind: BuildConfig
   apiVersion: build.openshift.io/v1
   metadata:
-    name: s2i-minimal-gpu-cuda-$(cuda_version)-notebook
+    name: jupyter-cuda-py3.8-ubi8-cuda11.0.3
   spec:
     output:
       to:
         kind: ImageStreamTag
-        name: 'minimal-gpu:py3.8-cuda-$(cuda_version)'
+        name: 'jupyter-cuda:py3.8-ubi8-cuda11.0.3'
     strategy:
       type: Docker
       dockerStrategy:
         from:
           kind: ImageStreamTag
-          name: '$(cuda_version)-cuda-s2i-thoth-ubi8-py38:latest'
+          name: 'python-cuda:3.8-ubi8-cuda11.0.3'
         noCache: true
         dockerfilePath: Dockerfile
     source:
@@ -50,6 +50,7 @@ items:
       - type: ImageChange
     resources:
       limits:
-        memory: 4Gi
+        memory: 6Gi
       requests:
-        memory: 4Gi
+        memory: 6Gi
+

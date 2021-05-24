@@ -1,0 +1,118 @@
+apiVersion: v1
+items:
+# pull the NVIDIA cuda container image from NVIDIA 
+- kind: ImageStream
+  apiVersion: image.openshift.io/v1
+  metadata:
+    name: "nvidia-cuda"
+  spec:
+    lookupPolicy:
+      local: true
+    tags:
+    - name: 11.0.3-ubi8
+      from:
+        kind: DockerImage
+        name: "nvcr.io/nvidia/cuda:11.0.3-cudnn8-devel-ubi8"
+      importPolicy: {}
+      referencePolicy:
+        type: Local
+# create an image stream for cuda
+- kind: ImageStream
+  apiVersion: image.openshift.io/v1
+  metadata:
+    name: "s2i-cuda"
+  spec:
+    lookupPolicy:
+      local: true
+# create an image stream for python cuda image
+- kind: ImageStream
+  apiVersion: image.openshift.io/v1
+  metadata:
+    name: "python-cuda"
+  spec:
+    lookupPolicy:
+      local: true
+# create a buildconfig for the s2i-base SCL container
+- kind: BuildConfig
+  apiVersion: build.openshift.io/v1
+  metadata:
+    name: "s2i-cuda-11.0.3-base-ubi8"
+  spec:
+    triggers:
+      - imageChange: {}
+        type: ImageChange
+    source:
+      type: Git
+      git:
+        uri: "https://github.com/sclorg/s2i-base-container"
+        ref: "master"
+      contextDir: "base/"
+    strategy:
+      type: Docker
+      dockerStrategy:
+        noCache: true
+        dockerfilePath: "Dockerfile.rhel8"
+        from:
+          kind: ImageStreamTag
+          name: nvidia-cuda:11.0.3-ubi8
+    output:
+      to:
+        kind: ImageStreamTag
+        name: s2i-cuda:11.0.3-base-ubi8
+# create a buildconfig for the s2i-core SCL container
+- kind: BuildConfig
+  apiVersion: build.openshift.io/v1
+  metadata:
+    name: "s2i-cuda-11.0.3-core-ubi8"
+  spec:
+    triggers:
+      - imageChange: {}
+        type: ImageChange
+    source:
+      type: Git
+      git:
+        uri: "https://github.com/sclorg/s2i-base-container"
+        ref: "master"
+      contextDir: "core/"
+    strategy:
+      type: Docker
+      dockerStrategy:
+        noCache: true
+        dockerfilePath: "Dockerfile.rhel8"
+        from:
+          kind: ImageStreamTag
+          name: s2i-cuda:11.0.3-base-ubi8
+    output:
+      to:
+        kind: ImageStreamTag
+        name: s2i-cuda:11.0.3-core-ubi8
+# create buildconfig for the s2i-python SCL container
+- kind: BuildConfig
+  apiVersion: build.openshift.io/v1
+  metadata:
+    name: "python-cuda-3.8-ubi8-cuda11.0.3"
+  spec:
+    triggers:
+      - imageChange: {}
+        type: ImageChange
+    source:
+      type: Git
+      git:
+        uri: "https://github.com/sclorg/s2i-python-container"
+        ref: "master"
+      contextDir: "3.8/"
+    strategy:
+      type: Docker
+      dockerStrategy:
+        imageOptimizationPolicy: SkipLayers
+        noCache: true
+        dockerfilePath: "Dockerfile.rhel8"
+        from:
+          kind: ImageStreamTag
+          name: s2i-cuda:11.0.3-core-ubi8
+    output:
+      to:
+        kind: ImageStreamTag
+        name: python-cuda:3.8-ubi8-cuda11.0.3
+kind: List
+metadata: {}
